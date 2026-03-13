@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Intelligent Document Classifier — Automatically classify documents using NLP and Machine Learning with TF-IDF feature vectors.">
+    <title>Intelligent Document Classifier | NLP-Powered</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <!-- Animated background particles -->
+    <div class="bg-particles" id="bgParticles"></div>
+
+    <!-- Header -->
+    <header class="header" id="header">
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M9 12H15M9 16H15M17 21H7C5.89543 21 5 20.1046 5 19V5C5 3.89543 5.89543 3 7 3H12.5858C12.851 3 13.1054 3.10536 13.2929 3.29289L18.7071 8.70711C18.8946 8.89464 19 9.149 19 9.41421V19C19 20.1046 18.1046 21 17 21Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M13 3V8C13 8.55228 13.4477 9 14 9H19" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <span class="logo-text">DocClassifier<span class="logo-ai">AI</span></span>
+            </div>
+            <nav class="nav-links">
+                <a href="#classifier" class="nav-link active">Classify</a>
+                <a href="#stats" class="nav-link">Model Stats</a>
+                <a href="#about" class="nav-link">About</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="hero">
+        <div class="hero-content">
+            <div class="hero-badge">
+                <span class="badge-dot"></span>
+                NLP-Powered Classification
+            </div>
+            <h1 class="hero-title">
+                Intelligent Document
+                <span class="gradient-text">Classifier</span>
+            </h1>
+            <p class="hero-subtitle">
+                Automatically classify documents into categories using advanced Natural Language Processing 
+                with TF-IDF feature vectors and Machine Learning algorithms.
+            </p>
+            <div class="hero-stats">
+                <div class="hero-stat">
+                    <span class="hero-stat-number" id="heroCategories">6</span>
+                    <span class="hero-stat-label">Categories</span>
+                </div>
+                <div class="hero-stat-divider"></div>
+                <div class="hero-stat">
+                    <span class="hero-stat-number" id="heroAccuracy">—</span>
+                    <span class="hero-stat-label">Accuracy</span>
+                </div>
+                <div class="hero-stat-divider"></div>
+                <div class="hero-stat">
+                    <span class="hero-stat-number" id="heroSamples">—</span>
+                    <span class="hero-stat-label">Training Samples</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Classifier Section -->
+    <section class="section" id="classifier">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Classify Your Document</h2>
+                <p class="section-desc">Paste text or upload a document file to classify it into one of 6 categories.</p>
+            </div>
+
+            <div class="classifier-grid">
+                <!-- Input Panel -->
+                <div class="card input-card">
+                    <div class="card-header">
+                        <div class="tab-group" id="inputTabs">
+                            <button class="tab active" data-tab="text" id="tabText">
+                                <svg viewBox="0 0 20 20" fill="currentColor" width="16" height="16">
+                                    <path d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h8a1 1 0 110 2H4a1 1 0 01-1-1z"/>
+                                </svg>
+                                Text Input
+                            </button>
+                            <button class="tab" data-tab="file" id="tabFile">
+                                <svg viewBox="0 0 20 20" fill="currentColor" width="16" height="16">
+                                    <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"/>
+                                </svg>
+                                File Upload
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Text Input -->
+                    <div class="tab-content active" id="textContent">
+                        <textarea id="textInput" class="text-area" 
+                            placeholder="Paste or type your document text here...&#10;&#10;Examples:&#10;• A news article about sports&#10;• A scientific research abstract&#10;• A technology blog post&#10;• A political commentary"></textarea>
+                        <div class="input-footer">
+                            <span class="char-count" id="charCount">0 characters</span>
+                            <button class="btn btn-primary" id="classifyBtn" onclick="classifyText()">
+                                <svg viewBox="0 0 20 20" fill="currentColor" width="18" height="18">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 9H7a1 1 0 100 2h3.586l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z" clip-rule="evenodd"/>
+                                </svg>
+                                Classify Document
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- File Upload -->
+                    <div class="tab-content" id="fileContent">
+                        <div class="dropzone" id="dropzone">
+                            <div class="dropzone-icon">
+                                <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M28 8H12C10.9391 8 9.92172 8.42143 9.17157 9.17157C8.42143 9.92172 8 10.9391 8 12V36C8 37.0609 8.42143 38.0783 9.17157 38.8284C9.92172 39.5786 10.9391 40 12 40H36C37.0609 40 38.0783 39.5786 38.8284 38.8284C39.5786 38.0783 40 37.0609 40 36V20L28 8Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M28 8V20H40" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M24 34V26" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M20 30H28" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                            <p class="dropzone-text">Drag & drop your file here</p>
+                            <p class="dropzone-subtext">or click to browse</p>
+                            <p class="dropzone-formats">Supports: .txt, .pdf, .docx</p>
+                            <input type="file" id="fileInput" accept=".txt,.pdf,.docx" hidden>
+                        </div>
+                        <div class="file-info" id="fileInfo" style="display:none;">
+                            <div class="file-info-icon">📄</div>
+                            <div class="file-info-details">
+                                <span class="file-name" id="fileName"></span>
+                                <span class="file-size" id="fileSize"></span>
+                            </div>
+                            <button class="btn-icon" id="removeFile" onclick="removeFile()">✕</button>
+                        </div>
+                        <div class="input-footer">
+                            <span></span>
+                            <button class="btn btn-primary" id="uploadBtn" onclick="uploadFile()" disabled>
+                                <svg viewBox="0 0 20 20" fill="currentColor" width="18" height="18">
+                                    <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                                Upload & Classify
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Results Panel -->
+                <div class="card results-card" id="resultsCard">
+                    <div class="card-header">
+                        <h3 class="card-title">Classification Results</h3>
+                    </div>
+                    
+                    <!-- Empty State -->
+                    <div class="results-empty" id="resultsEmpty">
+                        <div class="empty-icon">
+                            <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="32" cy="32" r="28" stroke="currentColor" stroke-width="2" stroke-dasharray="6 4"/>
+                                <path d="M24 28L32 36L40 28" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        <p class="empty-text">Submit a document to see classification results</p>
+                    </div>
+
+                    <!-- Loading State -->
+                    <div class="results-loading" id="resultsLoading" style="display:none;">
+                        <div class="loader">
+                            <div class="loader-ring"></div>
+                            <div class="loader-ring"></div>
+                            <div class="loader-ring"></div>
+                        </div>
+                        <p class="loading-text">Analyzing document...</p>
+                    </div>
+
+                    <!-- Results Content -->
+                    <div class="results-content" id="resultsContent" style="display:none;">
+                        <!-- Primary Result -->
+                        <div class="primary-result" id="primaryResult">
+                            <div class="result-category-icon" id="resultIcon"></div>
+                            <div class="result-info">
+                                <span class="result-label">Predicted Category</span>
+                                <span class="result-category" id="resultCategory">—</span>
+                            </div>
+                            <div class="result-confidence-badge" id="resultBadge">
+                                <span id="resultConfidence">0</span>%
+                            </div>
+                        </div>
+
+                        <!-- Document Info -->
+                        <div class="doc-info" id="docInfo">
+                            <div class="doc-info-item">
+                                <span class="doc-info-label">Words</span>
+                                <span class="doc-info-value" id="wordCount">0</span>
+                            </div>
+                            <div class="doc-info-item">
+                                <span class="doc-info-label">Characters</span>
+                                <span class="doc-info-value" id="textLength">0</span>
+                            </div>
+                            <div class="doc-info-item" id="fileNameInfo" style="display:none;">
+                                <span class="doc-info-label">File</span>
+                                <span class="doc-info-value" id="docFileName">—</span>
+                            </div>
+                        </div>
+
+                        <!-- Confidence Bars -->
+                        <div class="confidence-section">
+                            <h4 class="confidence-title">Confidence Scores</h4>
+                            <div class="confidence-bars" id="confidenceBars"></div>
+                        </div>
+                    </div>
+
+                    <!-- Error State -->
+                    <div class="results-error" id="resultsError" style="display:none;">
+                        <div class="error-icon">⚠️</div>
+                        <p class="error-text" id="errorText">Something went wrong</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Model Stats Section -->
+    <section class="section section-dark" id="stats">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Model Performance</h2>
+                <p class="section-desc">Real-time statistics from the trained NLP classification model.</p>
+            </div>
+
+            <div class="stats-grid" id="statsGrid">
+                <div class="stat-card stat-accent-1">
+                    <div class="stat-icon">🎯</div>
+                    <div class="stat-value" id="statTestAcc">—</div>
+                    <div class="stat-label">Test Accuracy</div>
+                </div>
+                <div class="stat-card stat-accent-2">
+                    <div class="stat-icon">📊</div>
+                    <div class="stat-value" id="statTrainAcc">—</div>
+                    <div class="stat-label">Train Accuracy</div>
+                </div>
+                <div class="stat-card stat-accent-3">
+                    <div class="stat-icon">🔄</div>
+                    <div class="stat-value" id="statCVAcc">—</div>
+                    <div class="stat-label">Cross-Val Accuracy</div>
+                </div>
+                <div class="stat-card stat-accent-4">
+                    <div class="stat-icon">📚</div>
+                    <div class="stat-value" id="statTrainSamples">—</div>
+                    <div class="stat-label">Training Samples</div>
+                </div>
+                <div class="stat-card stat-accent-5">
+                    <div class="stat-icon">🧪</div>
+                    <div class="stat-value" id="statTestSamples">—</div>
+                    <div class="stat-label">Test Samples</div>
+                </div>
+                <div class="stat-card stat-accent-6">
+                    <div class="stat-icon">🔢</div>
+                    <div class="stat-value" id="statFeatures">—</div>
+                    <div class="stat-label">TF-IDF Features</div>
+                </div>
+                <div class="stat-card stat-accent-7">
+                    <div class="stat-icon">⚡</div>
+                    <div class="stat-value" id="statTime">—</div>
+                    <div class="stat-label">Training Time</div>
+                </div>
+                <div class="stat-card stat-accent-8">
+                    <div class="stat-icon">🧠</div>
+                    <div class="stat-value" id="statAlgorithm">—</div>
+                    <div class="stat-label">Algorithm</div>
+                </div>
+            </div>
+
+            <!-- Categories -->
+            <div class="categories-section">
+                <h3 class="categories-title">Document Categories</h3>
+                <div class="categories-grid" id="categoriesGrid">
+                    <div class="category-chip" data-category="Technology">
+                        <span class="category-emoji">💻</span> Technology
+                    </div>
+                    <div class="category-chip" data-category="Science">
+                        <span class="category-emoji">🔬</span> Science
+                    </div>
+                    <div class="category-chip" data-category="Sports">
+                        <span class="category-emoji">⚽</span> Sports
+                    </div>
+                    <div class="category-chip" data-category="Politics">
+                        <span class="category-emoji">🏛️</span> Politics
+                    </div>
+                    <div class="category-chip" data-category="Religion">
+                        <span class="category-emoji">🙏</span> Religion
+                    </div>
+                    <div class="category-chip" data-category="Automobiles">
+                        <span class="category-emoji">🚗</span> Automobiles
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About / How it Works Section -->
+    <section class="section" id="about">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">How It Works</h2>
+                <p class="section-desc">The pipeline behind intelligent document classification.</p>
+            </div>
+            <div class="pipeline-grid">
+                <div class="pipeline-step">
+                    <div class="step-number">01</div>
+                    <div class="step-icon">📝</div>
+                    <h3 class="step-title">Input Document</h3>
+                    <p class="step-desc">Paste text or upload a document file (.txt, .pdf, .docx). The system extracts the raw text content.</p>
+                </div>
+                <div class="pipeline-arrow">→</div>
+                <div class="pipeline-step">
+                    <div class="step-number">02</div>
+                    <div class="step-icon">🔤</div>
+                    <h3 class="step-title">Text Preprocessing</h3>
+                    <p class="step-desc">Tokenization, stop-word removal, and n-gram extraction prepare the text for feature extraction.</p>
+                </div>
+                <div class="pipeline-arrow">→</div>
+                <div class="pipeline-step">
+                    <div class="step-number">03</div>
+                    <div class="step-icon">📐</div>
+                    <h3 class="step-title">TF-IDF Vectorization</h3>
+                    <p class="step-desc">Convert text into numerical feature vectors using Term Frequency–Inverse Document Frequency weighting.</p>
+                </div>
+                <div class="pipeline-arrow">→</div>
+                <div class="pipeline-step">
+                    <div class="step-number">04</div>
+                    <div class="step-icon">🤖</div>
+                    <h3 class="step-title">Classification</h3>
+                    <p class="step-desc">Multinomial Naive Bayes classifier predicts the document category with confidence scores.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <p class="footer-text">Intelligent Document Classifier • NLP-based Text Classification</p>
+                <p class="footer-sub">Built with Python, Flask, scikit-learn • TF-IDF + Naive Bayes</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
