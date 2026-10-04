@@ -11,12 +11,15 @@ license: mit
 
 # 📄 Intelligent Document Classifier
 
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Render-46E3B7?style=for-the-badge&logo=render&logoColor=white)](https://document-classifier-bk37.onrender.com)
 [![Python](https://img.shields.io/badge/Python-3.9%20%7C%203.10%20%7C%203.11-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
 [![Flask](https://img.shields.io/badge/Flask-000000?style=for-the-badge&logo=flask&logoColor=white)](https://flask.palletsprojects.com/)
 [![Scikit-Learn](https://img.shields.io/badge/scikit--learn-F7931E?style=for-the-badge&logo=scikit-learn&logoColor=white)](https://scikit-learn.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)](LICENSE)
 
 An AI-powered web application that classifies text and uploaded documents (`.txt`, `.pdf`, `.docx`) into categories with high confidence scoring using Natural Language Processing (NLP), TF-IDF feature extraction, and Multinomial Naive Bayes.
+
+🔗 **Live URL:** [https://document-classifier-bk37.onrender.com](https://document-classifier-bk37.onrender.com)
 
 ---
 
@@ -27,7 +30,7 @@ An AI-powered web application that classifies text and uploaded documents (`.txt
 - 📊 **Real-Time Confidence Scoring**: Visual breakdown of category probability distributions.
 - ⚡ **Interactive Web Interface**: Clean, responsive UI with instant text analysis and live file parsing.
 - 📈 **Model Statistics API**: View dataset metrics, training time, test accuracy, and cross-validation scores.
-- ⚡ **Model Caching**: Automatic caching using `joblib` for instant cloud cold starts.
+- ⚡ **Model Caching**: Pre-cached weights (`joblib`) for ultra-fast startup under 0.05 seconds.
 
 ---
 
@@ -55,7 +58,11 @@ An AI-powered web application that classifies text and uploaded documents (`.txt
 
 ## 🚀 Live Demo & Deployment
 
-### Deploy to Render in 1 Click
+### 🌐 Live Application
+The project is deployed and live on Render:
+👉 **[https://document-classifier-bk37.onrender.com](https://document-classifier-bk37.onrender.com)**
+
+### Deploy Your Own Instance
 
 [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy)
 
@@ -97,7 +104,7 @@ pip install -r requirements.txt
 ```bash
 python app.py
 ```
-Open your browser and navigate to `http://localhost:5000`.
+Open your browser and navigate to `http://localhost:7860` (or `http://localhost:5000`).
 
 ---
 
@@ -145,8 +152,9 @@ Open your browser and navigate to `http://localhost:5000`.
 {
   "algorithm": "TF-IDF + Multinomial Naive Bayes",
   "dataset": "20 Newsgroups (6 categories)",
-  "test_accuracy": 92.4,
-  "cv_accuracy": 91.8,
+  "test_accuracy": 83.09,
+  "cv_accuracy": 85.86,
+  "train_accuracy": 93.73,
   "num_features": 15000,
   "is_trained": true
 }
