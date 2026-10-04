@@ -1,17 +1,22 @@
 FROM python:3.11-slim
 
-WORKDIR /app
+# Create non-root user (Hugging Face Spaces requirement)
+RUN useradd -m -u 1000 user
+USER user
+ENV HOME=/home/user \
+    PATH=/home/user/.local/bin:$PATH \
+    PORT=7860
+
+WORKDIR $HOME/app
 
 # Install dependencies
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+COPY --chown=user:user requirements.txt .
+RUN pip install --no-cache-dir --upgrade -r requirements.txt
 
-# Copy source code
-COPY . .
+# Copy all project files
+COPY --chown=user:user . .
 
-# Set default port
-ENV PORT=5000
-EXPOSE 5000
+# Expose port 7860 (Hugging Face Spaces default)
+EXPOSE 7860
 
-# Run with gunicorn
-CMD ["gunicorn", "--bind", "0.0.0.0:5000", "--workers", "2", "--timeout", "120", "app:app"]
+CMD ["gunicorn", "--bind", "0.0.0.0:7860", "--workers", "2", "--timeout", "180", "app:app"]
