@@ -4,14 +4,16 @@ Uses TF-IDF feature vectors + Multinomial Naive Bayes for text classification.
 Trained on the 20 Newsgroups dataset with 6 curated categories.
 """
 
+import os
+import time
+import joblib
 import numpy as np
 from sklearn.datasets import fetch_20newsgroups
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.pipeline import Pipeline
-from sklearn.metrics import accuracy_score, classification_report
+from sklearn.metrics import accuracy_score
 from sklearn.model_selection import cross_val_score
-import time
 
 # Category mapping: 20 Newsgroups subset -> friendly names
 CATEGORY_MAP = {
@@ -33,6 +35,7 @@ CATEGORY_MAP = {
 
 NEWSGROUP_CATEGORIES = list(CATEGORY_MAP.keys())
 FRIENDLY_CATEGORIES = ['Technology', 'Science', 'Sports', 'Politics', 'Religion', 'Automobiles']
+MODEL_CACHE_PATH = os.path.join(os.path.dirname(__file__), 'model_cache.joblib')
 
 
 class DocumentClassifier:
@@ -40,7 +43,6 @@ class DocumentClassifier:
 
     def __init__(self):
         self.pipeline = None
-        self.friendly_labels = None
         self.train_accuracy = 0.0
         self.test_accuracy = 0.0
         self.cv_accuracy = 0.0
@@ -51,8 +53,27 @@ class DocumentClassifier:
         self.category_names = FRIENDLY_CATEGORIES
         self.is_trained = False
 
-    def train_model(self):
-        """Train the classification model on the 20 Newsgroups dataset."""
+    def train_model(self, force_retrain=False):
+        """Train or load the classification model."""
+        if not force_retrain and os.path.exists(MODEL_CACHE_PATH):
+            try:
+                print(f"[Classifier] Loading cached model from {MODEL_CACHE_PATH}...")
+                cached = joblib.load(MODEL_CACHE_PATH)
+                self.pipeline = cached['pipeline']
+                self.train_accuracy = cached.get('train_accuracy', 0.0)
+                self.test_accuracy = cached.get('test_accuracy', 0.0)
+                self.cv_accuracy = cached.get('cv_accuracy', 0.0)
+                self.num_train_samples = cached.get('num_train_samples', 0)
+                self.num_test_samples = cached.get('num_test_samples', 0)
+                self.num_features = cached.get('num_features', 15000)
+                self.training_time = cached.get('training_time', 0.0)
+                self.category_names = cached.get('category_names', FRIENDLY_CATEGORIES)
+                self.is_trained = True
+                print("[Classifier] Model loaded successfully from cache!")
+                return
+            except Exception as e:
+                print(f"[Classifier] Failed to load cache ({e}), retraining model...")
+
         print("[Classifier] Fetching 20 Newsgroups training data...")
         train_data = fetch_20newsgroups(
             subset='train',
@@ -102,7 +123,7 @@ class DocumentClassifier:
 
         # Cross-validation on training data
         cv_scores = cross_val_score(self.pipeline, train_data.data, train_friendly, cv=5, scoring='accuracy')
-        self.cv_accuracy = round(np.mean(cv_scores) * 100, 2)
+        self.cv_accuracy = round(float(np.mean(cv_scores)) * 100, 2)
 
         # Stats
         self.num_train_samples = len(train_data.data)
@@ -110,6 +131,24 @@ class DocumentClassifier:
         self.num_features = self.pipeline.named_steps['tfidf'].max_features
 
         self.is_trained = True
+
+        # Save cache for instant restarts
+        try:
+            joblib.dump({
+                'pipeline': self.pipeline,
+                'train_accuracy': self.train_accuracy,
+                'test_accuracy': self.test_accuracy,
+                'cv_accuracy': self.cv_accuracy,
+                'num_train_samples': self.num_train_samples,
+                'num_test_samples': self.num_test_samples,
+                'num_features': self.num_features,
+                'training_time': self.training_time,
+                'category_names': self.category_names
+            }, MODEL_CACHE_PATH)
+            print(f"[Classifier] Model cached to {MODEL_CACHE_PATH}")
+        except Exception as e:
+            print(f"[Classifier] Could not write cache file: {e}")
+
         print(f"[Classifier] Training complete!")
         print(f"  Train Accuracy: {self.train_accuracy}%")
         print(f"  Test Accuracy:  {self.test_accuracy}%")
